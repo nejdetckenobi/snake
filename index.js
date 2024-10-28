@@ -34,8 +34,8 @@ FoodType = Object.freeze({
   MULTIPLIER: 4,
   GHOST: 5,
   FOOD_INCREASE: 6,
-  SPEED_UP: 7,
-  SLOW_DOWN: 8,
+  // SPEED_UP: 7,
+  // SLOW_DOWN: 8,
 });
 
 FoodColorMapping = {
@@ -132,6 +132,7 @@ class Food extends Entity {
       this.scene.snake.coords.push(this.coords[0]);
       this.scene.multiplier += 1;
     } else if (this.type == FoodType.GHOST) {
+      this.scene.snake.isGhost = true;
     } else if (this.type == FoodType.FOOD_INCREASE) {
       this.scene.snake.coords.push(this.coords[0]);
       this.scene.foodCount = Math.min(this.scene.foodCount + 1, this.scene._maxFoodCount);
@@ -167,6 +168,7 @@ class Snake extends Entity {
     this.marginY = WALL_MARGIN;
     this.deadcolor = deadcolor;
     this.nextDirection = Direction.NO_DIRECTION;
+    this.isGhost = false;
   }
 
   _getColor() {
@@ -401,8 +403,12 @@ class Game {
     let snakeHead = this.snake.coords.last()
     for (var i = this.wall.coords.length - 1; i >= 0; i--) {
       if (this._sameCoord(this.wall.coords[i], snakeHead)) {
-        this.status = GameStatus.OVER;
-        return;
+        if (!this.snake.isGhost) {
+          this.status = GameStatus.OVER;
+          return;
+        } else {
+          this.snake.isGhost = false;
+        }
       }
     }
     for (var i = this.foods.length - 1; i >= 0; i--) {
