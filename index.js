@@ -34,8 +34,7 @@ FoodType = Object.freeze({
   MULTIPLIER: 4,
   GHOST: 5,
   FOOD_INCREASE: 6,
-  // SPEED_UP: 7,
-  // SLOW_DOWN: 8,
+  SPEED_UP: 7,
 });
 
 FoodColorMapping = {
@@ -47,18 +46,17 @@ FoodColorMapping = {
   [FoodType.GHOST]: 'fuchsia',
   [FoodType.FOOD_INCREASE]: 'aqua',
   [FoodType.SPEED_UP]: 'navy',
-  [FoodType.SLOW_DOWN]: 'olive'
 }
 
 var INITIAL_GAME_SPEED = 16;
 var BOARD_COLOR = '#550527';
 var SNAKE_COLOR = '#FAA613'
 var SNAKE_DEAD_COLOR = 'gray';
-var WALL_COLOR = 'lightgray';
+var WALL_COLOR = 'black';
 var STEP_SIZE = 32;
 
 var ENTITY_MARGIN = 0;
-var FOOD_MARGIN = 4;
+var FOOD_MARGIN = 8;
 var WALL_MARGIN = 4;
 var SNAKE_MARGIN = 4;
 
@@ -143,10 +141,6 @@ class Food extends Entity {
     } else if (this.type == FoodType.SPEED_UP) {
       this.scene.snake.coords.push(this.coords[0]);
       this.scene.setGameSpeed(this.scene.gameSpeed * 2);
-      this.scene.score += this.value * this.scene.multiplier;
-    } else if (this.type == FoodType.SLOW_DOWN) {
-      this.scene.snake.coords.push(this.coords[0]);
-      this.scene.setGameSpeed(Math.max(Math.floor(this.scene.gameSpeed / 2), 1));
       this.scene.score += this.value * this.scene.multiplier;
     }
   }
@@ -329,7 +323,7 @@ class Game {
   }
 
   setGameSpeed(value) {
-    this.gameSpeed = value;
+    this.gameSpeed = min(value, 24);
     clearInterval(this._interval);
     this._interval = setInterval(this.tick.bind(this), 1000 / this.gameSpeed);
   }
