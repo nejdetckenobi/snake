@@ -28,7 +28,7 @@ GameStatus = Object.freeze({
 
 FoodType = Object.freeze({
   NORMAL: 0,
-  SURPRISE: 1,
+  REVERSE: 1,
   WALL_CLEANER: 2,
   SHORTENER: 3,
   MULTIPLIER: 4,
@@ -40,7 +40,7 @@ FoodType = Object.freeze({
 
 FoodColorMapping = {
   [FoodType.NORMAL]: '#FFFFFF',
-  [FoodType.SURPRISE]: '#C92464',
+  [FoodType.REVERSE]: '#C92464',
   [FoodType.WALL_CLEANER]: 'maroon',
   [FoodType.SHORTENER]: 'tomato',
   [FoodType.MULTIPLIER]: 'yellow',
@@ -112,9 +112,12 @@ class Food extends Entity {
     if(this.type == FoodType.NORMAL) {
       this.scene.snake.coords.push(this.coords[0]);
       this.scene.score += this.value * this.scene.multiplier;
-    } else if (this.type == FoodType.SURPRISE) {
-      this.type = Food.pickRandomFoodType();
-      this.effect();
+    } else if (this.type == FoodType.REVERSE) {
+      var newSnakeCoords = [];
+      while (this.scene.snake.coords.length > 0) {
+        newSnakeCoords.push(this.scene.snake.coords.pop());
+      }
+      this.scene.snake.coords = newSnakeCoords;
     } else if (this.type == FoodType.SHORTENER) {
       this.scene.snake.coords.shift();
       this.scene.score += this.value * this.scene.multiplier;
